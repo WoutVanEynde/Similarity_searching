@@ -14,7 +14,7 @@ library(gplots)
 library(stats)
 
 # load query compounds from SDF file
-sdf <- read.SDFset("C:\\Users\\woutv\\Desktop\\ARDI_chirality_BRENKS_NIH_PAINS_ZINC_filtered_ENAMINE.sdf")
+sdf <- read.SDFset("C:\\Users\\woutv\\Desktop\\ARDI_chirality_BRENKS_PAINS_filtered_ENAMINE.sdf")
 
 # assign unique ID's
 sdfid(sdf)
