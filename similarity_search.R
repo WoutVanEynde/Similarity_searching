@@ -1,7 +1,9 @@
 # Installation of R via RStudio;
 # Installation of ChemminerR in RStudio: install.packages("BiocManager", dependencies=TRUE)
-# Installation of packages in terminal: sudo apt-get install librsvg2-dev
+# Installation of packages in terminal: sudo apt-get install librsvg2-dev libeigen3-dev
+# Installation of openbabel (not with sudo apt-get install!)
 # BiocManager::install("ChemmineR")
+# BiocManager::install("ChemmineOB")
 # Installation of gplots in RStudio: install.packages("gplots")
 
 ######################
@@ -21,23 +23,15 @@ sdfid(sdf)
 unique_ids <- makeUnique(sdfid(sdf))
 cid(sdf) <- unique_ids
 
-# atom pair descriptors generation
-ap <- sdf2ap(sdf)
-ap
+# MACCS fingerprints generation
+fp <- fingerprintOB(sdf, "MACCS")
+fp
 
-# check for duplicates
-duplicates <- cmp.duplicated(ap, type=1)
-duplicates
-
-# distance matrix from atom pair descriptors (cluster size is the amount of compounds and count is the amount of clusters with this size)
-disMA <- cmp.cluster(db=ap, cutoff = c(0.7, 0.8, 0.9), save.distances="distmat.rda", quiet=TRUE) 
-load("distmat.rda")
-cluster.sizestat(disMA, cluster.result = 1)
-cluster.sizestat(disMA, cluster.result = 2)
-cluster.sizestat(disMA, cluster.result = 3)
-hc <- hclust(as.dist(distmat), method="single")
-hc[["labels"]] <- cid(ap)
-simMA <- 1-distmat
+# similarity matrix from MACCS fingerprints
+simMA <- sapply(cid(fp), function(x) fpSim(fp[x], fp, method="Tanimoto", sorted=FALSE)) 
+disMA <- 1-simMA
+hc <- hclust(as.dist(disMA), method="single")
+hc[["labels"]] <- cid(fp)
 
 # dendrogram (export 20000 width, otherwise not properly visible labels)
 dendro <- as.dendrogram(hc)
@@ -46,7 +40,7 @@ plot(dendro, edgePar=list(col=4, lwd=2), horiz=TRUE, axes = FALSE)
 # heatmap (export 20000 width, otherwise not properly visible labels)
 heatmap.2(simMA, Rowv=as.dendrogram(hc), Colv=as.dendrogram(hc), 
           col=colorpanel(40, "red", "white", "blue"), 
-          density.info="none", trace="none", labRow = cid(ap), labCol = cid(ap))
+          density.info="none", trace="none", labRow = cid(fp), labCol = cid(fp))
 
 ####################
 #Compound selection#
