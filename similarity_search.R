@@ -16,7 +16,7 @@ library(gplots)
 library(stats)
 
 # load query compounds from SDF file
-sdf <- read.SDFset("/home/wout/AR/6_similarity_search/ARDI_chirality_BRENKS_PAINS_filtered_ENAMINE.sdf")
+sdf <- read.SDFset("/home/wout/AR/6_similarity_search/ARDI_BRENKS_PAINS_filtered.sdf")
 
 # assign unique ID's
 sdfid(sdf)
@@ -40,7 +40,7 @@ plot(dendro, edgePar=list(col=4, lwd=2), horiz=TRUE, axes = FALSE)
 # heatmap (export 20000 width, otherwise not properly visible labels)
 heatmap.2(simMA, Rowv=as.dendrogram(hc), Colv=as.dendrogram(hc), 
           col=colorpanel(40, "red", "white", "blue"), 
-          density.info="none", trace="none", labRow = cid(fp), labCol = cid(fp))
+          density.info="none", trace="none", labRow = "", labCol = "")
 
 ####################
 #Compound selection#
